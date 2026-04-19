@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Path to Financial Freedom</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #FAF8F3;
+  --ink: #1C1C1A;
+  --ink-mid: #5A5A56;
+  --ink-light: #A8A69E;
+  --border: rgba(28,28,26,0.10);
+
+  --c1: #3C3489; --c1-light: #EEEDFE; --c1-mid: #7F77DD;
+  --c2: #085041; --c2-light: #E1F5EE; --c2-mid: #1D9E75;
+  --c3: #633806; --c3-light: #FAEEDA; --c3-mid: #BA7517;
+  --c4: #72243E; --c4-light: #FBEAF0; --c4-mid: #D4537E;
+  --c5: #27500A; --c5-light: #EAF3DE; --c5-mid: #639922;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.page-title {
+  font-family: 'Lora', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.2rem;
+}
+
+.page-sub {
+  font-size: 0.78rem;
+  color: var(--ink-mid);
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+/* progress bar */
+.progress-wrap {
+  margin-bottom: 2rem;
+}
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+.progress-title { font-size: 0.75rem; color: var(--ink-mid); }
+.progress-pct { font-size: 0.75rem; font-weight: 500; color: var(--ink); }
+.progress-track {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--c1-mid), var(--c2-mid), var(--c5-mid));
+  background-size: 200% 100%;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+/* layer tabs */
+.layer-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.tab {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--ink-mid);
+  transition: all 0.15s;
+  user-select: none;
+}
+.tab.active { color: white; border-color: transparent; }
+.tab[data-layer="all"].active { background: var(--ink); }
+.tab[data-layer="1"].active { background: var(--c1); }
+.tab[data-layer="2"].active { background: var(--c2); }
+.tab[data-layer="3"].active { background: var(--c3); }
+.tab[data-layer="4"].active { background: var(--c4); }
+.tab[data-layer="5"].active { background: var(--c5); }
+
+/* milestones */
+.milestones { display: flex; flex-direction: column; gap: 10px; }
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+}
+.card[data-layer="1"]::before { background: var(--c1-mid); }
+.card[data-layer="2"]::before { background: var(--c2-mid); }
+.card[data-layer="3"]::before { background: var(--c3-mid); }
+.card[data-layer="4"]::before { background: var(--c4-mid); }
+.card[data-layer="5"]::before { background: var(--c5-mid); }
+
+.card.hidden { display: none; }
+.card.done { opacity: 0.45; }
+.card.done .card-title { text-decoration: line-through; }
+
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.card-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1.5px solid #C8C6BE;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  background: white;
+}
+.card.done .card-check {
+  background: var(--c2-mid);
+  border-color: var(--c2-mid);
+}
+.card-check-inner {
+  display: none;
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(-45deg) translateY(-1px);
+}
+.card.done .card-check-inner { display: block; }
+
+.card-body { flex: 1; }
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.layer-badge {
+  font-size: 0.6rem;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.card[data-layer="1"] .layer-badge { background: var(--c1-light); color: var(--c1); }
+.card[data-layer="2"] .layer-badge { background: var(--c2-light); color: var(--c2); }
+.card[data-layer="3"] .layer-badge { background: var(--c3-light); color: var(--c3); }
+.card[data-layer="4"] .layer-badge { background: var(--c4-light); color: var(--c4); }
+.card[data-layer="5"] .layer-badge { background: var(--c5-light); color: var(--c5); }
+
+.card-phase {
+  font-size: 0.6rem;
+  color: var(--ink-light);
+  letter-spacing: 0.04em;
+}
+
+.card-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.card-note {
+  font-size: 0.73rem;
+  color: var(--ink-mid);
+  line-height: 1.5;
+}
+
+.card-detail {
+  display: none;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-size: 0.73rem;
+  color: var(--ink-mid);
+  line-height: 1.6;
+}
+.card.expanded .card-detail { display: block; }
+
+.expand-hint {
+  font-size: 0.65rem;
+  color: var(--ink-light);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.expand-arrow {
+  display: inline-block;
+  transition: transform 0.2s;
+  font-style: normal;
+}
+.card.expanded .expand-arrow { transform: rotate(180deg); }
+
+/* freedom banner */
+.freedom-banner {
+  margin-top: 1.5rem;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.25rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.freedom-banner::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--c1-mid), var(--c2-mid), var(--c3-mid), var(--c4-mid), var(--c5-mid));
+}
+.freedom-title {
+  font-family: 'Lora', serif;
+  font-size: 1rem;
+  font-weight: 400;
+  font-style: italic;
+  margin-bottom: 0.4rem;
+}
+.freedom-note {
+  font-size: 0.73rem;
+  color: var(--ink-mid);
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.depth-note {
+  margin-top: 1rem;
+  font-size: 0.72rem;
+  color: var(--ink-light);
+  text-align: center;
+  font-style: italic;
+  line-height: 1.6;
+}
+</style>
+</head>
+<body>
+
+<div class="page-title">My path to financial freedom</div>
+<p class="page-sub">Click any card to expand it. Check it off when it's done. Filter by layer to stay focused.</p>
+
+<div class="progress-wrap">
+  <div class="progress-top">
+    <span class="progress-title">Overall progress</span>
+    <span class="progress-pct" id="pct-label">0% complete</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+</div>
+
+<div class="layer-tabs">
+  <div class="tab active" data-layer="all" onclick="filterLayer('all')">All layers</div>
+  <div class="tab" data-layer="1" onclick="filterLayer('1')">Layer 1 — Active income</div>
+  <div class="tab" data-layer="2" onclick="filterLayer('2')">Layer 2 — Productized</div>
+  <div class="tab" data-layer="3" onclick="filterLayer('3')">Layer 3 — Passive assets</div>
+  <div class="tab" data-layer="4" onclick="filterLayer('4')">Layer 4 — Reduce expenses</div>
+  <div class="tab" data-layer="5" onclick="filterLayer('5')">Layer 5 — Long game</div>
+</div>
+
+<div class="milestones" id="milestones">
+
+  <!-- LAYER 1: ACTIVE INCOME -->
+  <div class="card" data-layer="1" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 1 · Active</span><span class="card-phase">Foundation</span></div>
+        <div class="card-title">Land a day job at the right seniority level and salary</div>
+        <div class="card-note">This is my floor. Everything else is built on top of it.</div>
+        <div class="card-detail">Active income is what I trade time for — salary, freelance, consulting. It's the most fragile stream because it stops if I do, but it's also the one that funds everything else. Getting this right — at the correct level and pay — is the single most important financial move I can make right now. A $10K salary increase compounds through every future raise, every pension contribution, and every dollar I can invest.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-layer="1" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 1 · Active</span><span class="card-phase">Foundation</span></div>
+        <div class="card-title">Build one month of expenses as a cash buffer</div>
+        <div class="card-note">The first savings threshold. Reduces anxiety immediately.</div>
+        <div class="card-detail">Before investing, before paying off debt aggressively, before anything — one month of fixed expenses sitting in a savings account changes how I feel day to day. It means a bad week doesn't become a crisis. EQ Bank personal savings earns a decent interest rate and keeps it accessible but slightly separate from daily spending.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-layer="1" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 1 · Active</span><span class="card-phase">Foundation</span></div>
+        <div class="card-title">Grow buffer to 3 months of fixed expenses</div>
+        <div class="card-note">The real emergency fund. Buys me time and choices.</div>
+        <div class="card-detail">Three months means I can leave a bad job, weather a gap between contracts, or absorb an unexpected cost without going into debt. This is the threshold where financial stress starts to meaningfully drop. Once here, I can shift focus toward investing rather than saving.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 2: PRODUCTIZED -->
+  <div class="card" data-layer="2" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 2 · Productized</span><span class="card-phase">Building now</span></div>
+        <div class="card-title">Launch Accessible Learning Labs with 2 paid digital tools</div>
+        <div class="card-note">I made these once. They sell without me in the room.</div>
+        <div class="card-detail">Productized income is active income I've converted into something more scalable. I still created it with my time, but it doesn't require my ongoing time to earn. Digital tools, templates, and courses are the most accessible version of this for someone with my skills. The key is resisting the urge to give everything away — free is a strategy, not a default.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-layer="2" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 2 · Productized</span><span class="card-phase">Building now</span></div>
+        <div class="card-title">Launch Andrea Robin Studio postcard club with 5 founding members</div>
+        <div class="card-note">Recurring revenue — the same subscribers pay every month.</div>
+        <div class="card-detail">Subscriptions are the most stable form of productized income because the revenue renews automatically. Five founding members isn't a business — it's a proof of concept. From there I can optimize and grow. The goal at launch is not profit; it's learning what works and building the habit of charging.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-layer="2" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 2 · Productized</span><span class="card-phase">Next step</span></div>
+        <div class="card-title">Grow side income until it covers one fixed expense</div>
+        <div class="card-note">e.g. rent, phone, groceries — one category paid by the business.</div>
+        <div class="card-detail">This is the first meaningful milestone for side income — not "quit my job" but "this pays for something real." It's motivating, concrete, and it means my day job salary can be directed more toward savings and investment. Depth before breadth: I make one stream solid before adding another.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-layer="2" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 2 · Productized</span><span class="card-phase">Growth</span></div>
+        <div class="card-title">License a curriculum or tool to an institution</div>
+        <div class="card-note">Schools, nonprofits, and L&D teams pay for repeatable tools.</div>
+        <div class="card-detail">Once I have proven digital tools with good feedback, I can approach organizations — schools, accessibility-focused nonprofits, corporate learning teams — about licensing them rather than selling individual copies. A single institutional license can be worth 50–200 individual sales and renews annually. This is where Accessible Learning Labs shifts from a shop to a business.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 3: PASSIVE -->
+  <div class="card" data-layer="3" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 3 · Passive</span><span class="card-phase">Start small, start now</span></div>
+        <div class="card-title">Open a TFSA and start automated investing — even $10/month</div>
+        <div class="card-note">Time in the market matters more than the amount. Start now.</div>
+        <div class="card-detail">The Tax-Free Savings Account is one of the most powerful tools available to Canadians and one of the most underused. Any growth inside it — dividends, capital gains — is completely tax-free. Even $25/month in a low-cost index ETF (like XEQT or VEQT) starts the compounding clock. The amount matters less than the habit. I can increase contributions as my income grows.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-layer="3" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 3 · Passive</span><span class="card-phase">Growth</span></div>
+        <div class="card-title">Grow TFSA to the point where it earns $100/month in dividends or growth</div>
+        <div class="card-note">This is the first "money making money" threshold.</div>
+        <div class="card-detail">At a 5% average annual return, $24,000 invested generates roughly $100/month. This isn't the goal — it's a waypoint that makes the abstract feel real. Dividends from index funds and ETFs get reinvested automatically (DRIP), which accelerates compounding. The feeling of money arriving without any action on my part is qualitatively different and worth experiencing early.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-layer="3" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 3 · Passive</span><span class="card-phase">Long game</span></div>
+        <div class="card-title">Explore royalties — license creative work or publish a resource</div>
+        <div class="card-note">Books, licensed art, course platforms, published curricula.</div>
+        <div class="card-detail">Royalties are passive income from creative work: a book published with a small press, art licensed through a stock platform, a course listed on Teachable or Skillshare. These don't require ongoing work to earn, but they do require upfront creative investment and audience. Given my skills in learning design and art, this is a realistic long-term layer — not now, but worth keeping in view.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 4: REDUCE EXPENSES -->
+  <div class="card" data-layer="4" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 4 · Reduce expenses</span><span class="card-phase">Ongoing</span></div>
+        <div class="card-title">Audit subscriptions and recurring costs — cut anything unused</div>
+        <div class="card-note">$200/month saved = $200 earned, but without the tax.</div>
+        <div class="card-detail">Reducing expenses is mathematically identical to earning more income, but it's after-tax — which makes it more powerful dollar for dollar. A $200/month cut to unnecessary costs is worth more than a $200 side income because that side income gets taxed. This doesn't mean deprivation — it means being intentional. I audit once a year and cut anything that doesn't actively add value to my life or work.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-layer="4" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 4 · Reduce expenses</span><span class="card-phase">Annual</span></div>
+        <div class="card-title">Negotiate or switch: insurance, phone plan, internet</div>
+        <div class="card-note">These rarely decrease on their own. Asking takes 20 minutes.</div>
+        <div class="card-detail">Most people overpay for recurring services because switching costs feel high. In reality, calling to cancel or switching providers once a year typically saves $200–600/year on phone alone. I set a recurring calendar reminder to review these annually — phone plan, internet, renter's or home insurance. The 20 minutes of discomfort is worth it every single time.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 5: LONG GAME -->
+  <div class="card" data-layer="5" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 5 · Long game</span><span class="card-phase">Vision</span></div>
+        <div class="card-title">Define what financial freedom actually looks like for me</div>
+        <div class="card-note">A number and a lifestyle — not a vague feeling.</div>
+        <div class="card-detail">Financial freedom means different things to different people. For some it's "I can quit my job." For others it's "I can take a sabbatical every few years." For me, I need to get specific: what does my ideal ordinary Tuesday look like? What does it cost? That number — monthly, annually — is my actual target. Everything else is in service of it.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-layer="5" onclick="handleCard(this)">
+    <div class="card-top">
+      <div class="card-check"><div class="card-check-inner"></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="layer-badge">Layer 5 · Long game</span><span class="card-phase">Vision</span></div>
+        <div class="card-title">Reach a point where passive + productized income covers my baseline</div>
+        <div class="card-note">This is the threshold. Day job becomes a choice, not a necessity.</div>
+        <div class="card-detail">When my investments, digital products, and subscriptions together cover my monthly fixed costs — that's financial freedom in its most practical form. My day job doesn't disappear; it becomes optional. That optionality changes everything: how I negotiate, how I respond to stress, what I'm willing to say no to. Getting there takes years, not months — but every step in the right direction counts.</div>
+        <div class="expand-hint"><span class="expand-arrow">▾</span> tap to read more</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="freedom-banner">
+  <div class="freedom-title">My version of financial freedom</div>
+  <div class="freedom-note">Not a number someone else decided. The point where passive and productized income covers my baseline — and my day job is a choice, not a requirement. I get there one layer at a time, depth before breadth.</div>
+</div>
+
+<p class="depth-note">Depth before breadth — make one stream solid before building the next.</p>
+
+<script>
+const TOTAL = document.querySelectorAll('.card').length;
+
+function handleCard(card) {
+  const target = event.target;
+  const isCheck = target.closest('.card-check');
+  if (isCheck) {
+    card.classList.toggle('done');
+    updateProgress();
+    event.stopPropagation();
+    return;
+  }
+  card.classList.toggle('expanded');
+}
+
+function filterLayer(layer) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('[data-layer="' + layer + '"]').classList.add('active');
+  document.querySelectorAll('.card').forEach(c => {
+    if (layer === 'all' || c.dataset.layer === layer) {
+      c.classList.remove('hidden');
+    } else {
+      c.classList.add('hidden');
+    }
+  });
+}
+
+function updateProgress() {
+  const done = document.querySelectorAll('.card.done').length;
+  const pct = Math.round(done / TOTAL * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('pct-label').textContent = pct + '% complete (' + done + ' of ' + TOTAL + ')';
+}
+</script>
+</body>
+</html>
